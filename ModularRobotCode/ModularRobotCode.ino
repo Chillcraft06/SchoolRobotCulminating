@@ -14,64 +14,93 @@ void setup() {
   //wires, so these should be setup as OUTPUTs
   pinMode(motor1WireA, OUTPUT);
   pinMode(motor1WireB, OUTPUT);
-}
 
-void loop() {
-  // Starting delay to actually put it down / prep
   delay(2000);
 
   Forwards();
-  delay(100);
 
-  Stop();
+  Stop(1);
 
   Backwards();
-  delay(100);
 
-  Turn(90);
-  delay(500);
-  Turn(-90);
+  Stop(1);
 
-  Stop();
+  Turn(90, 2);
 
-  // Stop infinitely
-  delay(99999999);
+  Stop(0.5);
+  
+  Turn(-90, 2);
+}
+
+void loop() {
+  
 }
 
 
 // Move forwards
-void Forwards()
+void Forwards(float seconds)
 {
+  float targetTime = millis() + (seconds * 1000);
+  while(millis() <= targetTime)
+  {
+    digitalWrite(motor1WireA, LOW);
+    digitalWrite(motor1WireB, HIGH);
+  
+    digitalWrite(motor2WireA, LOW);
+    digitalWrite(motor2WireB, HIGH);
+  }
+  
   digitalWrite(motor1WireA, LOW);
-  digitalWrite(motor1WireB, HIGH);
+  digitalWrite(motor1WireB, LOW);
 
   digitalWrite(motor2WireA, LOW);
-  digitalWrite(motor2WireB, HIGH);
+  digitalWrite(motor2WireB, LOW);
 }
 
 // Essentially just the move forward code, but reversed the current outputss
-void Backwards()
+void Backwards(float seconds)
 {
-  digitalWrite(motor1WireA, HIGH);
+  float targetTime = millis() + (seconds * 1000);
+  while(millis() <= targetTime)
+  {
+    digitalWrite(motor1WireA, HIGH);
+    digitalWrite(motor1WireB, LOW);
+  
+    digitalWrite(motor2WireA, HIGH);
+    digitalWrite(motor2WireB, LOW);
+  }
+
+  digitalWrite(motor1WireA, LOW);
   digitalWrite(motor1WireB, LOW);
 
-  digitalWrite(motor2WireA, HIGH);
+  digitalWrite(motor2WireA, LOW);
   digitalWrite(motor2WireB, LOW);
 }
 
 
 // Stop moving
-void Stop()
+void Stop(float seconds)
 {
+  float targetTime = millis() + (seconds * 1000);
+  while(millis() <= targetTime)
+  {
+    digitalWrite(motor1WireA, LOW);
+    digitalWrite(motor1WireB, LOW);
+  
+    digitalWrite(motor2WireA, LOW);
+    digitalWrite(motor2WireB, LOW);
+  }
+
   digitalWrite(motor1WireA, LOW);
   digitalWrite(motor1WireB, LOW);
 
   digitalWrite(motor2WireA, LOW);
   digitalWrite(motor2WireB, LOW);
+
 }
 
 // Turn by "Degrees"
-void Turn(int degrees)
+void Turn(int degrees, float seconds)
 {
   // Start initially off
 
@@ -80,21 +109,31 @@ void Turn(int degrees)
 
   digitalWrite(motor2WireA, LOW);
   digitalWrite(motor2WireB, LOW);
+  
+  float targetTime = millis() + (seconds * 1000);
+  while(millis() <= targetTime)
+  {
+    // Turn right
+    if (degrees > 0) {
+      digitalWrite(motor1WireA, LOW);
+      digitalWrite(motor1WireB, HIGH);
+      delay(degrees * 2);
+      digitalWrite(motor1WireA, LOW);
+      digitalWrite(motor1WireB, LOW);
+    }
+    // Turn left
+    else {
+      digitalWrite(motor2WireA, LOW);
+      digitalWrite(motor2WireB, HIGH);
+      delay(degrees * 2);
+      digitalWrite(motor2WireA, LOW);
+      digitalWrite(motor2WireB, LOW);
+    }
+  }
+  
+  digitalWrite(motor1WireA, LOW);
+  digitalWrite(motor1WireB, LOW);
 
-  // Turn right
-  if (degrees > 0) {
-    digitalWrite(motor1WireA, LOW);
-    digitalWrite(motor1WireB, HIGH);
-    delay(degrees * 2);
-    digitalWrite(motor1WireA, LOW);
-    digitalWrite(motor1WireB, LOW);
-  }
-  // Turn left
-  else {
-    digitalWrite(motor2WireA, LOW);
-    digitalWrite(motor2WireB, HIGH);
-    delay(degrees * 2);
-    digitalWrite(motor2WireA, LOW);
-    digitalWrite(motor2WireB, LOW);
-  }
+  digitalWrite(motor2WireA, LOW);
+  digitalWrite(motor2WireB, LOW);
 }
