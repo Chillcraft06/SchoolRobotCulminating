@@ -31,7 +31,7 @@ void setup() {
   
   Turn(-90);
 
-  Stop(1)
+  Stop(1);
 }
 
 void loop() {
