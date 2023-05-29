@@ -17,19 +17,21 @@ void setup() {
 
   delay(2000);
 
-  Forwards();
+  Forwards(1);
 
   Stop(1);
 
-  Backwards();
+  Backwards(1);
 
   Stop(1);
 
-  Turn(90, 2);
+  Turn(90);
 
   Stop(0.5);
   
-  Turn(-90, 2);
+  Turn(-90);
+
+  Stop(1)
 }
 
 void loop() {
@@ -100,7 +102,7 @@ void Stop(float seconds)
 }
 
 // Turn by "Degrees"
-void Turn(int degrees, float seconds)
+void Turn(int degrees)
 {
   // Start initially off
 
@@ -110,24 +112,18 @@ void Turn(int degrees, float seconds)
   digitalWrite(motor2WireA, LOW);
   digitalWrite(motor2WireB, LOW);
   
-  float targetTime = millis() + (seconds * 1000);
+  float targetTime = millis() + (degrees * 350);
   while(millis() <= targetTime)
   {
     // Turn right
     if (degrees > 0) {
       digitalWrite(motor1WireA, LOW);
       digitalWrite(motor1WireB, HIGH);
-      delay(degrees * 2);
-      digitalWrite(motor1WireA, LOW);
-      digitalWrite(motor1WireB, LOW);
     }
     // Turn left
     else {
       digitalWrite(motor2WireA, LOW);
       digitalWrite(motor2WireB, HIGH);
-      delay(degrees * 2);
-      digitalWrite(motor2WireA, LOW);
-      digitalWrite(motor2WireB, LOW);
     }
   }
   
