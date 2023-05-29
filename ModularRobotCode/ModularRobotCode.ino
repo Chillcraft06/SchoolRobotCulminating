@@ -40,7 +40,7 @@ void loop() {
 
 
 // Move forwards
-void Forwards(float seconds)
+void Backwards(float seconds)
 {
   float targetTime = millis() + (seconds * 1000);
   while(millis() <= targetTime)
@@ -60,7 +60,7 @@ void Forwards(float seconds)
 }
 
 // Essentially just the move forward code, but reversed the current outputss
-void Backwards(float seconds)
+void Forwards(float seconds)
 {
   float targetTime = millis() + (seconds * 1000);
   while(millis() <= targetTime)
@@ -102,7 +102,7 @@ void Stop(float seconds)
 }
 
 // Turn by "Degrees"
-void Turn(int degrees)
+void Turn(int Degrees)
 {
   // Start initially off
 
@@ -112,11 +112,11 @@ void Turn(int degrees)
   digitalWrite(motor2WireA, LOW);
   digitalWrite(motor2WireB, LOW);
   
-  float targetTime = millis() + (degrees * 350);
+  float targetTime = millis() + (Degrees * 5);
   while(millis() <= targetTime)
   {
     // Turn right
-    if (degrees > 0) {
+    if (Degrees > 0) {
       digitalWrite(motor1WireA, LOW);
       digitalWrite(motor1WireB, HIGH);
     }
