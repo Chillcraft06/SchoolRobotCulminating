@@ -46,7 +46,7 @@ void loop() {
 // Move forwards
 void Backwards(int ms, int intensity)
 {
-  int targetTime = millis() + (int)(ms / (intensity / 100));
+  int targetTime = millis() + ms;
   while(millis() <= targetTime)
   {
     digitalWrite(motor1WireA, LOW);
@@ -66,7 +66,7 @@ void Backwards(int ms, int intensity)
 // Essentially just the move forward code, but reversed the current outputss
 void Forwards(int ms, int intensity)
 {
-  int targetTime = millis() + (int)(ms / (intensity / 100));
+  int targetTime = millis() + ms;
   while(millis() <= targetTime)
   {
     analogWrite(motor1WireA, map(intensity, 1, 100, 10, 1023));
@@ -85,7 +85,7 @@ void Forwards(int ms, int intensity)
 
 void AbsForwards(int ms, int intensity)
 {
-  int targetTime = millis() + (int)(ms / (intensity / 100));
+  int targetTime = millis() + ms;
   while(millis() <= targetTime)
   {
     analogWrite(motor1WireA, (int)(map(intensity, 1, 100, 10, 1023) / 1.2));
@@ -127,7 +127,8 @@ void Turn(int Degrees, int intensity)
 
   digitalWrite(motor2WireA, LOW);
   digitalWrite(motor2WireB, LOW);
-  
+
+  // Technically should be left as is, turning should be absolute. (90 degrees at 25% speed should be the same as 90 degrees at 100% speed)
   int targetTime = millis() + ((abs(Degrees) * 5) / (intensity / 100));
   while(millis() <= targetTime)
   {
