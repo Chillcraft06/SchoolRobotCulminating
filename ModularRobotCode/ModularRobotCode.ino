@@ -14,26 +14,11 @@ void setup() {
   //wires, so these should be setup as OUTPUTs
   pinMode(motor1WireA, OUTPUT);
   pinMode(motor1WireB, OUTPUT);
+  Serial.begin(9600);
 
   delay(2000);
 
-  Forwards(500, 50);
-
-  Stop(1000);
-
-  Backwards(500, 50);
-
-  Stop(1000);
-
   Turn(90, 50);
-
-  Stop(1000);
-  
-  Turn(-90, 50);
-
-  Stop(1000);
-
-  AbsForwards(750, 50);
 
   Stop(1000);
 }
@@ -88,10 +73,10 @@ void AbsForwards(int ms, int intensity)
   int targetTime = millis() + ms;
   while(millis() <= targetTime)
   {
-    analogWrite(motor1WireA, (int)(map(intensity, 1, 100, 10, 1023) / 1.2));
+    analogWrite(motor1WireA, (int)(map(intensity, 1, 100, 10, 1023) / 1.0055));
     digitalWrite(motor1WireB, LOW);
   
-    analogWrite(motor2WireA, map(intensity, 1, 100, 10, 1023));
+    analogWrite(motor2WireA, (int)(map(intensity, 1, 100, 10, 1023)));
     digitalWrite(motor2WireB, LOW);
   }
 
@@ -129,9 +114,12 @@ void Turn(int Degrees, int intensity)
   digitalWrite(motor2WireB, LOW);
 
   // Technically should be left as is, turning should be absolute. (90 degrees at 25% speed should be the same as 90 degrees at 100% speed)
-  int targetTime = millis() + ((abs(Degrees) * 5) / (intensity / 100));
+  int targetTime = millis() + (int)(((abs(Degrees) * 5) / (intensity / 100)));
+  Serial.println(millis());
+  Serial.println(targetTime);
   while(millis() <= targetTime)
   {
+    Serial.println(millis());
     // Turn right
     if (Degrees > 0) {
       digitalWrite(motor1WireA, LOW);
