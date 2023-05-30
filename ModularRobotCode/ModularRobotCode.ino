@@ -114,7 +114,7 @@ void Turn(int Degrees, int intensity)
   digitalWrite(motor2WireB, LOW);
 
   // Technically should be left as is, turning should be absolute. (90 degrees at 25% speed should be the same as 90 degrees at 100% speed)
-  int targetTime = millis() + (int)(((abs(Degrees) * 5) / (intensity / 100)));
+  int targetTime = millis() + (int)(((abs(Degrees) * 5) / ((float)intensity / 100)));
   Serial.println(millis());
   Serial.println(targetTime);
   while(millis() <= targetTime)
