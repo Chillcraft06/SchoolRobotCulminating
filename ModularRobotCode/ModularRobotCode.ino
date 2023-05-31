@@ -8,67 +8,102 @@ int motor1WireB = 6;
 int motor2WireA = 10;
 int motor2WireB = 11;
 
+int mode = 1;
+int modeButton = 9;
+bool modeBtnPressed = false;
+int modeLED = 3; // Will need changes in functionality if PWM port needed (such as ultrasonic distance sensor), works just fine for now.
+
+int selectButton = 8;
+
+int lineDetector = 7;
+
 void setup() {
   //I will setup and demonstrate one motor here.
   //The arduio will be setting the state of these
   //wires, so these should be setup as OUTPUTs
   pinMode(motor1WireA, OUTPUT);
   pinMode(motor1WireB, OUTPUT);
+  pinMode(modeLED, OUTPUT);
+
+  pinMode(modeButton, INPUT);
+  pinMode(selectButton, INPUT);
+  pinMode(lineDetector, INPUT);
+
   
-  delay(2000);
-
-  AbsForwards(1000, 100);
-
-  Stop(1000);
-
-  AbsBackwards(500, 25);
-
-  Stop(1000);
+  
 }
 
 void loop() {
-  
-}
-
-
-// Move forwards
-void Backwards(int ms, int intensity)
-{
-  int targetTime = millis() + ms;
-  while(millis() <= targetTime)
+  if (digitalRead(modeButton) == HIGH && !modeBtnPressed)
   {
-    digitalWrite(motor1WireA, LOW);
-    analogWrite(motor1WireB, map(intensity, 1, 100, 100, 255));
-  
-    digitalWrite(motor2WireA, LOW);
-    analogWrite(motor2WireB, map(intensity, 1, 100, 100, 255));
-  }
-  
-  digitalWrite(motor1WireA, LOW);
-  digitalWrite(motor1WireB, LOW);
-
-  digitalWrite(motor2WireA, LOW);
-  digitalWrite(motor2WireB, LOW);
-}
-
-// Essentially just the move forward code, but reversed the current outputss
-void Forwards(int ms, int intensity)
-{
-  int targetTime = millis() + ms;
-  while(millis() <= targetTime)
-  {
-    analogWrite(motor1WireA, map(intensity, 1, 100, 100, 255));
-    digitalWrite(motor1WireB, LOW);
-  
-    analogWrite(motor2WireA, map(intensity, 1, 100, 100, 255));
-    digitalWrite(motor2WireB, LOW);
+    modeBtnPressed = true;
+    mode += 1;
+    if (mode > 2) // change max number as modes are added
+    {
+      mode = 1;
+    }
   }
 
-  digitalWrite(motor1WireA, LOW);
-  digitalWrite(motor1WireB, LOW);
+  analogWrite(modeLED, map(mode, 1, 2, 100, 200)); // show mode number through brightness.
 
-  digitalWrite(motor2WireA, LOW);
-  digitalWrite(motor2WireB, LOW);
+  if (digitalRead(selectButton) == HIGH)
+  {
+    digitalWrite(modeLED, LOW);
+    switch(mode)
+    {
+      case 1: // Normal mode / Testing mode
+        TestingMode();
+      break;
+
+      case 2: // Line follow mode
+        LineFollow();
+      break;
+    }
+    
+    //After mode finishes, go back to selection "menu".
+
+  }
+
+  if (digitalRead(modeButton) == LOW && modeBtnPressed)
+  {
+    modeBtnPressed = false;
+  }
+}
+
+void TestingMode()
+{
+  delay(2000);
+
+  Turn(-90, 50);
+  Stop(1000);
+  Turn(90, 50);
+  Stop(500);
+  Turn(90, 50);
+  Stop(1000);
+  Turn(-90, 50);
+  Stop(500);
+  AbsForwards(500, 100);
+  AbsBackwards(1000, 50);
+  Stop(1000);
+}
+
+void LineFollow()
+{
+  while(digitalRead(modeButton) == LOW)
+  {
+    delay(2000);
+
+    if (digitalRead(lineDetector) == HIGH)
+    {
+      Turn(10, 75);
+    }
+    else
+    {
+      Turn(-10, 75);
+    }
+    AbsForwards(100, 75);
+  }
+  modeBtnPressed = true;
 }
 
 void AbsForwards(int ms, int intensity)
@@ -169,3 +204,46 @@ void Turn(int Degrees, int intensity)
   digitalWrite(motor2WireA, LOW);
   digitalWrite(motor2WireB, LOW);
 }
+
+
+/* OLD CODE, may still need just in case
+
+void Forwards(int ms, int intensity)
+{
+  int targetTime = millis() + ms;
+  while(millis() <= targetTime)
+  {
+    analogWrite(motor1WireA, map(intensity, 1, 100, 100, 255));
+    digitalWrite(motor1WireB, LOW);
+  
+    analogWrite(motor2WireA, map(intensity, 1, 100, 100, 255));
+    digitalWrite(motor2WireB, LOW);
+  }
+
+  digitalWrite(motor1WireA, LOW);
+  digitalWrite(motor1WireB, LOW);
+
+  digitalWrite(motor2WireA, LOW);
+  digitalWrite(motor2WireB, LOW);
+}
+
+void Backwards(int ms, int intensity)
+{
+  int targetTime = millis() + ms;
+  while(millis() <= targetTime)
+  {
+    digitalWrite(motor1WireA, LOW);
+    analogWrite(motor1WireB, map(intensity, 1, 100, 100, 255));
+  
+    digitalWrite(motor2WireA, LOW);
+    analogWrite(motor2WireB, map(intensity, 1, 100, 100, 255));
+  }
+  
+  digitalWrite(motor1WireA, LOW);
+  digitalWrite(motor1WireB, LOW);
+
+  digitalWrite(motor2WireA, LOW);
+  digitalWrite(motor2WireB, LOW);
+}
+
+*/
