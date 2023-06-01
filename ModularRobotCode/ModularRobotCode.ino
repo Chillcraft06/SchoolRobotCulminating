@@ -9,7 +9,7 @@ int motor2WireA = 10;
 int motor2WireB = 11;
 
 int mode = 1;
-int modeButton = 2;
+int modeButton = 7;
 bool modeBtnPressed = false;
 int modeLED = 3; // Will need changes in functionality if PWM port needed (such as ultrasonic distance sensor), works just fine for now.
 
@@ -29,12 +29,12 @@ void setup() {
   pinMode(selectButton, INPUT);
   pinMode(lineDetector, INPUT);
 
-  
+  Serial.begin(9600);
   
 }
 
 void loop() {
-  if (digitalRead(modeButton) == HIGH && !modeBtnPressed)
+  if (digitalRead(modeButton) == HIGH && modeBtnPressed == false)
   {
     modeBtnPressed = true;
     mode += 1;
@@ -42,9 +42,30 @@ void loop() {
     {
       mode = 1;
     }
+    while(digitalRead(modeButton) == HIGH)
+    {
+      // empty loop
+    }
+  }
+  else if(digitalRead(modeButton) == LOW && modeBtnPressed == true) 
+  {
+    modeBtnPressed = false;
+    Serial.print(mode);
   }
 
-  analogWrite(modeLED, map(mode, 1, 2, 100, 200)); // show mode number through brightness.
+
+  switch(mode)
+  {
+    case 1: 
+        analogWrite(modeLED, 30); // show mode number through brightness.
+      break;
+
+      case 2: // Line follow mode
+        analogWrite(modeLED, 60); // show mode number through brightness.
+      break;
+  }
+  
+  
 
   if (digitalRead(selectButton) == HIGH)
   {
@@ -64,10 +85,7 @@ void loop() {
 
   }
 
-  if (digitalRead(modeButton) == LOW && modeBtnPressed)
-  {
-    modeBtnPressed = false;
-  }
+
 }
 
 void TestingMode()
