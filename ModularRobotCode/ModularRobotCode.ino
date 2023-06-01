@@ -15,7 +15,7 @@ int modeLED = 3; // Will need changes in functionality if PWM port needed (such 
 
 int selectButton = 8;
 
-int lineDetector = 7;
+int lineDetector = 13;
 
 void setup() {
   //I will setup and demonstrate one motor here.
