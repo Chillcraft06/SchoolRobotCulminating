@@ -9,7 +9,7 @@ int motor2WireA = 10;
 int motor2WireB = 11;
 
 int mode = 1;
-int modeButton = 9;
+int modeButton = 2;
 bool modeBtnPressed = false;
 int modeLED = 3; // Will need changes in functionality if PWM port needed (such as ultrasonic distance sensor), works just fine for now.
 
