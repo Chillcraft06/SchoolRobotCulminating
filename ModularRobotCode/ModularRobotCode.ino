@@ -23,6 +23,8 @@ void setup() {
   //wires, so these should be setup as OUTPUTs
   pinMode(motor1WireA, OUTPUT);
   pinMode(motor1WireB, OUTPUT);
+  pinMode(motor2WireA, OUTPUT);
+  pinMode(motor2WireB, OUTPUT);
   pinMode(modeLED, OUTPUT);
 
   pinMode(modeButton, INPUT);
@@ -94,14 +96,14 @@ void TestingMode()
 
   Turn(-90, 50);
   Stop(1000);
-  Turn(90, 50);
-  Stop(500);
+  Turn(180, 50);
+  Stop(1000);
   Turn(90, 50);
   Stop(1000);
-  Turn(-90, 50);
-  Stop(500);
-  AbsForwards(500, 100);
-  AbsBackwards(1000, 50);
+  Turn(-360, 50);
+  Stop(1000);
+  AbsForwards(1000, 100);
+  AbsBackwards(2000, 50);
   Stop(1000);
 }
 
@@ -109,17 +111,20 @@ void LineFollow()
 {
   while(digitalRead(modeButton) == LOW)
   {
-    delay(2000);
+    delay(1000);
 
     if (digitalRead(lineDetector) == HIGH)
     {
       Turn(10, 75);
+      Stop(100);
     }
     else
     {
       Turn(-10, 75);
+      Stop(100);
     }
-    AbsForwards(100, 75);
+    
+    AbsForwards(100, 50);
   }
   modeBtnPressed = true;
 }
@@ -192,7 +197,7 @@ void Turn(int Degrees, int intensity)
   digitalWrite(motor2WireB, LOW);
 
   // Technically should be left as is, turning should be absolute. (90 degrees at 25% speed should be the same as 90 degrees at 100% speed)
-  int targetTime = millis() + (int)(((abs(Degrees) / 1.2) / ((float)intensity / 100)));
+  int targetTime = millis() + (int)(((abs(Degrees) / 4) / ((float)intensity / 1000)));
 
   while(millis() <= targetTime)
   {
@@ -200,18 +205,18 @@ void Turn(int Degrees, int intensity)
     // Turn right
     if (Degrees > 0) {
       digitalWrite(motor1WireA, LOW);
-      analogWrite(motor1WireB, map(intensity, 1, 100, 100, 255) / 2);
+      analogWrite(motor1WireB, map(intensity, 1, 100, 100, 255));
       
-      analogWrite(motor2WireA, map(intensity, 1, 100, 100, 255) / 2);
+      analogWrite(motor2WireA, map(intensity, 1, 100, 100, 255));
       digitalWrite(motor2WireB, LOW);
     }
     // Turn left
     else {
-      analogWrite(motor1WireA, map(intensity, 1, 100, 100, 255) / 2);
+      analogWrite(motor1WireA, map(intensity, 1, 100, 100, 255));
       digitalWrite(motor1WireB, LOW);
       
       digitalWrite(motor2WireA, LOW);
-      analogWrite(motor2WireB, map(intensity, 1, 100, 100, 255) / 2);
+      analogWrite(motor2WireB, map(intensity, 1, 100, 100, 255));
 
     }
   }
