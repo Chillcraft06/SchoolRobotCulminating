@@ -29,6 +29,7 @@ void loop() {
       
       analogWrite(motor2WireA, 255 / Speed);
       digitalWrite(motor2WireB, LOW);
+      delay(35);
   }
   else
   {
@@ -37,16 +38,9 @@ void loop() {
       
     digitalWrite(motor2WireA, LOW);
     analogWrite(motor2WireB, 255 / Speed);
+    delay(35);
   }
-   delay(50);
-
-    digitalWrite(motor1WireA, LOW);
-    digitalWrite(motor1WireB, LOW);
-      
-    digitalWrite(motor2WireA, LOW);
-    digitalWrite(motor2WireB, LOW);
-
-   delay(400);
+   
    
    analogWrite(motor1WireA, 255 / Speed);
    digitalWrite(motor1WireB, LOW);
@@ -54,5 +48,5 @@ void loop() {
    analogWrite(motor2WireA, 255 / Speed);
    digitalWrite(motor2WireB, LOW);
 
-   delay(50);
+   delay(25);
 }
