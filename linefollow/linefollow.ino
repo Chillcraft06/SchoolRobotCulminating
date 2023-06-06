@@ -24,29 +24,31 @@ void loop() {
   // put your main code here, to run repeatedly:
   if (digitalRead(sensor) == HIGH)
   {
-      digitalWrite(motor1WireA, LOW);
-      analogWrite(motor1WireB, 255 / Speed);
-      
-      analogWrite(motor2WireA, 255 / Speed);
-      digitalWrite(motor2WireB, LOW);
-      delay(35);
+     
+    digitalWrite(motor1WireA, LOW);
+    analogWrite(motor1WireB, 255 / Speed);
+    
+    analogWrite(motor2WireA, 255 / Speed);
+    digitalWrite(motor2WireB, LOW);
+    delay(23);
   }
   else
   {
-    analogWrite(motor1WireA, 255 / Speed);
+    
+   analogWrite(motor1WireA, 255 / Speed);
     digitalWrite(motor1WireB, LOW);
       
     digitalWrite(motor2WireA, LOW);
     analogWrite(motor2WireB, 255 / Speed);
-    delay(35);
+    delay(23);
   }
    
    
-   analogWrite(motor1WireA, 255 / Speed);
-   digitalWrite(motor1WireB, LOW);
+   analogWrite(motor1WireB, 255 / Speed);
+   digitalWrite(motor1WireA, LOW);
 
-   analogWrite(motor2WireA, 255 / Speed);
-   digitalWrite(motor2WireB, LOW);
+   analogWrite(motor2WireB, 255 / Speed);
+   digitalWrite(motor2WireA, LOW);
 
-   delay(25);
+   delay(13);
 }
