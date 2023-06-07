@@ -1,3 +1,5 @@
+#include <SoftwareSerial.h>
+
 //There are two pins for each motor whose
 //state will determing the state of movement
 //for that motor (still, running, power, direction)
@@ -8,14 +10,11 @@ int motor1WireB = 6;
 int motor2WireA = 10;
 int motor2WireB = 11;
 
-int mode = 1;
-int modeButton = 7;
-bool modeBtnPressed = false;
-int modeLED = 3; // Will need changes in functionality if PWM port needed (such as ultrasonic distance sensor), works just fine for now.
-
-int selectButton = 8;
-
 int lineDetector = 13;
+
+
+SoftwareSerial hc06(2,3);
+String cmd="";
 
 void setup() {
   //I will setup and demonstrate one motor here.
@@ -25,110 +24,13 @@ void setup() {
   pinMode(motor1WireB, OUTPUT);
   pinMode(motor2WireA, OUTPUT);
   pinMode(motor2WireB, OUTPUT);
-  pinMode(modeLED, OUTPUT);
-
-  pinMode(modeButton, INPUT);
-  pinMode(selectButton, INPUT);
   pinMode(lineDetector, INPUT);
 
   Serial.begin(9600);
+
+  hc06.begin(9600);
   
 }
-
-void loop() {
-  if (digitalRead(modeButton) == HIGH && modeBtnPressed == false)
-  {
-    modeBtnPressed = true;
-    mode += 1;
-    if (mode > 2) // change max number as modes are added
-    {
-      mode = 1;
-    }
-    while(digitalRead(modeButton) == HIGH)
-    {
-      // empty loop
-    }
-  }
-  else if(digitalRead(modeButton) == LOW && modeBtnPressed == true) 
-  {
-    modeBtnPressed = false;
-    Serial.print(mode);
-  }
-
-
-  switch(mode)
-  {
-    case 1: 
-        analogWrite(modeLED, 30); // show mode number through brightness.
-      break;
-
-      case 2: // Line follow mode
-        analogWrite(modeLED, 60); // show mode number through brightness.
-      break;
-  }
-  
-  
-
-  if (digitalRead(selectButton) == HIGH)
-  {
-    digitalWrite(modeLED, LOW);
-    switch(mode)
-    {
-      case 1: // Normal mode / Testing mode
-        TestingMode();
-      break;
-
-      case 2: // Line follow mode
-        LineFollow();
-      break;
-    }
-    
-    //After mode finishes, go back to selection "menu".
-
-  }
-
-
-}
-
-void TestingMode()
-{
-  delay(2000);
-
-  Turn(-90, 50);
-  Stop(1000);
-  Turn(180, 50);
-  Stop(1000);
-  Turn(90, 50);
-  Stop(1000);
-  Turn(-360, 50);
-  Stop(1000);
-  AbsForwards(1000, 100);
-  AbsBackwards(2000, 50);
-  Stop(1000);
-}
-
-void LineFollow()
-{
-  while(digitalRead(modeButton) == LOW)
-  {
-    delay(1000);
-
-    if (digitalRead(lineDetector) == HIGH)
-    {
-      Turn(10, 75);
-      Stop(100);
-    }
-    else
-    {
-      Turn(-10, 75);
-      Stop(100);
-    }
-    
-    AbsForwards(100, 50);
-  }
-  modeBtnPressed = true;
-}
-
 void AbsForwards(int ms, int intensity)
 {
   int targetTime = millis() + ms;
@@ -155,7 +57,7 @@ void AbsBackwards(int ms, int intensity)
   while(millis() <= targetTime)
   {
     digitalWrite(motor1WireA, LOW);
-    analogWrite(motor1WireB, (int)(map(intensity, 1, 100, 100, 255) + 2 )); 
+    analogWrite(motor1WireB, (int)(map(intensity, 1, 100, 100, 255) - 2 )); 
 
 
     digitalWrite(motor2WireA, LOW);
@@ -197,8 +99,14 @@ void Turn(int Degrees, int intensity)
   digitalWrite(motor2WireB, LOW);
 
   // Technically should be left as is, turning should be absolute. (90 degrees at 25% speed should be the same as 90 degrees at 100% speed)
-  int targetTime = millis() + (int)(((abs(Degrees) / 4) / ((float)intensity / 1000)));
+  int targetTime = abs(millis() + (int)(((abs(Degrees) / 4) / ((float)intensity / 1000))));
 
+  Serial.println(targetTime);
+
+  Serial.println(abs(Degrees) / 4);
+
+  Serial.println((float)intensity / 1000);
+  Serial.println((abs(Degrees) / 4) / ((float)intensity / 1000));
   while(millis() <= targetTime)
   {
 
@@ -227,6 +135,69 @@ void Turn(int Degrees, int intensity)
   digitalWrite(motor2WireA, LOW);
   digitalWrite(motor2WireB, LOW);
 }
+void loop() {
+  while(hc06.available()>0){
+        cmd+=(char)hc06.read();
+    }
+   if(cmd!=""){
+    Serial.print("Command recieved : ");
+    Serial.println(cmd);
+    Serial.println(cmd.indexOf("T"));
+    // We expect ON or OFF from bluetooth
+    if(cmd.indexOf("T") >= 0){
+            Turn(cmd.substring(1).toInt(), 100);
+            Serial.println(cmd.substring(1).toInt());
+    } else if(cmd.indexOf("F") >= 0){
+            AbsForwards(cmd.substring(1).toInt(), 100);
+    }else if(cmd.indexOf("B") >= 0){
+            AbsBackwards(cmd.substring(1).toInt(), 100);
+    }
+    else if(cmd.indexOf("S") >= 0){
+            Stop(200);
+    }
+    cmd=""; //reset cmd
+  }
+}
+
+void TestingMode()
+{
+  delay(2000);
+
+  Turn(-90, 50);
+  Stop(1000);
+  Turn(180, 50);
+  Stop(1000);
+  Turn(90, 50);
+  Stop(1000);
+  Turn(-360, 50);
+  Stop(1000);
+  AbsForwards(1000, 100);
+  AbsBackwards(2000, 50);
+  Stop(1000);
+}
+
+void LineFollow()
+{
+  while(true)
+  {
+    delay(1000);
+
+    if (digitalRead(lineDetector) == HIGH)
+    {
+      Turn(10, 75);
+      Stop(100);
+    }
+    else
+    {
+      Turn(-10, 75);
+      Stop(100);
+    }
+    
+    AbsForwards(100, 50);
+  }
+}
+
+
 
 
 /* OLD CODE, may still need just in case
