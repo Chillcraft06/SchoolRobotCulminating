@@ -33,7 +33,7 @@ void setup() {
 }
 void AbsForwards(int ms, int intensity)
 {
-  int targetTime = millis() + ms;
+  long targetTime = millis() + ms;
   while(millis() <= targetTime)
   {
     analogWrite(motor1WireA, (int)(map(intensity, 1, 100, 100, 255) - 2)); 
@@ -53,7 +53,7 @@ void AbsForwards(int ms, int intensity)
 
 void AbsBackwards(int ms, int intensity)
 {
-  int targetTime = millis() + ms;
+  long targetTime = millis() + ms;
   while(millis() <= targetTime)
   {
     digitalWrite(motor1WireA, LOW);
@@ -76,7 +76,7 @@ void AbsBackwards(int ms, int intensity)
 // Stop moving
 void Stop(int ms)
 {
-  int targetTime = millis() + ms;
+  long targetTime = millis() + ms;
   while(millis() <= targetTime)
   {
     digitalWrite(motor1WireA, LOW);
@@ -99,7 +99,7 @@ void Turn(int Degrees, int intensity)
   digitalWrite(motor2WireB, LOW);
 
   // Technically should be left as is, turning should be absolute. (90 degrees at 25% speed should be the same as 90 degrees at 100% speed)
-  int targetTime = abs(millis() + (int)(((abs(Degrees) / 4) / ((float)intensity / 1000))));
+  long targetTime = abs(millis() + (int)(((abs(Degrees) / 4) / ((float)intensity / 1000))));
 
   Serial.println(targetTime);
 
