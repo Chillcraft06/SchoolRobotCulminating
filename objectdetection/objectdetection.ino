@@ -1,4 +1,4 @@
-#include <NewPing.h>
+
 
 //There are two pins for each motor whose
 //state will determing the state of movement
@@ -10,15 +10,6 @@ int motor1WireB = 6;
 int motor2WireA = 10;
 int motor2WireB = 11;
 
-#define TRIGGER_PIN  8 // Arduino pin tied to trigger pin on the ultrasonic sensor.
-#define ECHO_PIN     7  // Arduino pin tied to echo pin on the ultrasonic sensor.
-#define TRIGGER_PIN2  12 // Arduino pin tied to trigger pin on the ultrasonic sensor.
-#define ECHO_PIN2     4  // Arduino pin tied to echo pin on the ultrasonic sensor.
-#define MAX_DISTANCE 200 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
-
-NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
-
-NewPing sonar2(TRIGGER_PIN2, ECHO_PIN2, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
 
 
 void setup() {
@@ -30,7 +21,7 @@ void setup() {
   pinMode(motor2WireA, OUTPUT);
   pinMode(motor2WireB, OUTPUT);
 
-  Serial.begin(115200); // Open serial monitor at 115200 baud to see ping results.
+
   
 }
 void AbsForwards(int ms, int intensity)
@@ -75,19 +66,7 @@ void AbsBackwards(int ms, int intensity)
 }
 
 
-// Stop moving
-void Stop(int ms)
-{
-  unsigned long targetTime = millis() + ms;
-  while(millis() <= targetTime)
-  {
-    digitalWrite(motor1WireA, LOW);
-    digitalWrite(motor1WireB, LOW);
-  
-    digitalWrite(motor2WireA, LOW);
-    digitalWrite(motor2WireB, LOW);
-  }
-}
+
 
 // Turn by "Degrees"
 void Turn(int Degrees, int intensity)
@@ -138,25 +117,6 @@ void Turn(int Degrees, int intensity)
   digitalWrite(motor2WireB, LOW);
 }
 void loop() {
-  if (sonar.ping_cm() <= 30)
-  {
-    Turn(10, 70);
-  }
-  else
-  {
-    if (sonar2.ping_cm() >= 10)
-    {
-      Turn(-5, 70);
-    }
-    else if (sonar2.ping_cm() <= 5)
-    {
-      Turn(10, 70);
-    }
-    else
-    {
-      AbsBackwards(50, 70);
-    }
-  }
 }
 
 
